@@ -15,17 +15,17 @@ const createServer = (requestHandler) => {
         // se crea una variable que almacenara la request de forma que sea global para el metodo
         let request;
         // se implementa el metodo on para el socket al cual se le pasará el evento y la funcion que se ejecutara cuando el evento ocurra
-        socket.on('data', function(data){
+        socket.on('data', function (data) {
             // se pasa la data de la peticion a string
             let String_data = data.toString();
             // se compara la peticion en tipo string con la expresion regular
             let comparacion = /[a-zA-Z]+ \/[ a-zA-Z\/]* HTTP\/1\.1/i.test(String_data);
-            
-            
-            
+
+
+
             // se crea la nueva request obteniendo el head y el body y almacenandolos por separado =>...
 
-            
+
             // se implementa request handler al cual se le pasa la peticion y el metodo send mediante un objeto
             requestHandler(request, {
                 send: (response_code, response_header, response_body) => {
@@ -50,7 +50,7 @@ const createServer = (requestHandler) => {
         listen: (portNumber) => {
             //se imprime por consola el puerto en el que estará abierta la conexion del servidor
             //para que el usuario pueda acceder a la ruta
-            console.log("Servidor abierto en http://localhost:"+portNumber);
+            console.log("Servidor abierto en http://localhost:" + portNumber);
             //se establece el metodo para que el servidor escuche (listen) en el puerto indicado
             server.listen(portNumber);
         },
@@ -58,4 +58,6 @@ const createServer = (requestHandler) => {
             server.close();
         }
     };
-  };
+};
+
+module.exports = createServer;

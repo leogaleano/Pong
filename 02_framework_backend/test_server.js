@@ -1,4 +1,4 @@
-const createServer = require("./create_server.js");
+const createServer = require("./create_server");
 
 const get = (request, response) => {
     const authorization = request.getHeader("Authorization");
