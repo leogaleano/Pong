@@ -3,6 +3,55 @@ const events = require("events");
 const net = require("net");
 const Stream = require("stream");
 
+// crear la funcion  que recibe el headersbody (string)
+// identificar headers y guardarlos en clave valor, hacerlo generico no sabemos cuantos heders vendran
+// headersBody
+const getMapHeadersBody = (method,headersBody)=>{
+  // creamos la variable map que vamos a returnar
+  var headersBodyMap = new map();
+
+  // comprobamos que es lo que recibimos
+  //console.log("esta es la headersBody que estamos recibiendo : \n\n" + headersBody +"\n");
+  switch (request.method) {
+    case "GET": {
+      if (method == "GET") {
+        //separo la cadena en varias por el salto de linea, no sabemos el numero exacto en el ejemplo de get salen 3
+        var data_headersBody = headersBody.split("\n")
+
+        for (var i = 0; i < data_headersBody.length; i++) {
+
+          // por cada una seleccionaremos el contenido previo a ":" que sera el key
+          // y el contenido posterior a ":" que sera el value
+          line = data[i];
+          var lineContent = line.split(":")
+
+          // anterior ":" --> key
+          key = lineContent[0];
+          console.log("key ==> " + key);
+
+          // posterior ":" -->  value
+          value = lineContent[1];
+          console.log("Value ==> " + value);
+
+          // y le añadimos este al map
+          headersBodyMap.set(key, value);
+
+        }
+      }
+    }
+    case "POST": {
+    }
+    default: {
+    }
+  }
+
+
+
+  // devolvemos el map con el contenido de headersBody almacenado en k-v
+  return headersBodyMap;
+}
+
+
 // se implementa la funcion createServer
 const createServer = (requestHandler) => {
   // se crea el servidor mediante net y se le pasa un socket
@@ -21,6 +70,10 @@ const createServer = (requestHandler) => {
 
       const [infoArray, ...headersBody] = bufferString.split("\r\n");
       const resources = infoArray.split(" ");
+
+      // llamar a la funcion identifica y guarda headers en key-v
+      getMapHeadersBody(headersBody);
+
       const request = {
         method: resources[0],
         path: resources[1],
