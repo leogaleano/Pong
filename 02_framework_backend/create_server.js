@@ -6,51 +6,37 @@ const Stream = require("stream");
 // crear la funcion  que recibe el headersbody (string)
 // identificar headers y guardarlos en clave valor, hacerlo generico no sabemos cuantos heders vendran
 // headersBody
-const getMapHeadersBody = (method,headersBody)=>{
+const getMapHeadersBody = (headersBody)=>{
   // creamos la variable map que vamos a returnar
   var headersBodyMap = new map();
 
   // comprobamos que es lo que recibimos
   //console.log("esta es la headersBody que estamos recibiendo : \n\n" + headersBody +"\n");
-  switch (request.method) {
-    case "GET": {
-      if (method == "GET") {
-        //separo la cadena en varias por el salto de linea, no sabemos el numero exacto en el ejemplo de get salen 3
-        var data_headersBody = headersBody.split("\n")
 
-        for (var i = 0; i < data_headersBody.length; i++) {
+  //separo la cadena en varias por el salto de linea, no sabemos el numero exacto en el ejemplo de get salen 3
+  var data_headersBody = headersBody.split("\n")
 
-          // por cada una seleccionaremos el contenido previo a ":" que sera el key
-          // y el contenido posterior a ":" que sera el value
-          line = data[i];
-          var lineContent = line.split(":")
+  for (var i = 0; i < data_headersBody.length; i++) {
+    // por cada una seleccionaremos el contenido previo a ":" que sera el key
+    // y el contenido posterior a ":" que sera el value
+    line = data[i];
+    var lineContent = line.split(":")
 
-          // anterior ":" --> key
-          key = lineContent[0];
-          console.log("key ==> " + key);
+    // anterior ":" --> key
+    key = lineContent[0];
+    console.log("key ==> " + key);
 
-          // posterior ":" -->  value
-          value = lineContent[1];
-          console.log("Value ==> " + value);
+    // posterior ":" -->  value
+    value = lineContent[1];
+    console.log("Value ==> " + value);
 
-          // y le añadimos este al map
-          headersBodyMap.set(key, value);
-
-        }
-      }
-    }
-    case "POST": {
-    }
-    default: {
-    }
+    // y le añadimos este al map
+    headersBodyMap.set(key, value);
   }
-
-
 
   // devolvemos el map con el contenido de headersBody almacenado en k-v
   return headersBodyMap;
 }
-
 
 // se implementa la funcion createServer
 const createServer = (requestHandler) => {
@@ -72,7 +58,7 @@ const createServer = (requestHandler) => {
       const resources = infoArray.split(" ");
 
       // llamar a la funcion identifica y guarda headers en key-v
-      getMapHeadersBody(headersBody);
+      getMapHeadersBody(method,headersBody);
 
       const request = {
         method: resources[0],
