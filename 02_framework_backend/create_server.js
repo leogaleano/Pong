@@ -6,20 +6,20 @@ const Stream = require("stream");
 // crear la funcion  que recibe el headersbody (string)
 // identificar headers y guardarlos en clave valor, hacerlo generico no sabemos cuantos heders vendran
 // headersBody
-const getMapHeadersBody = (headersBody)=>{
+const getMapHeadersBody = (headersBody) => {
   // creamos la variable map que vamos a returnar
-  var headersBodyMap = new map();
+  var headersBodyMap = new Map();
 
   // comprobamos que es lo que recibimos
   //console.log("esta es la headersBody que estamos recibiendo : \n\n" + headersBody +"\n");
 
   //separo la cadena en varias por el salto de linea, no sabemos el numero exacto en el ejemplo de get salen 3
-  var data_headersBody = headersBody.split("\n")
+  var data_headersBody = headersBody.split("\r\n")
 
   for (var i = 0; i < data_headersBody.length; i++) {
     // por cada una seleccionaremos el contenido previo a ":" que sera el key
     // y el contenido posterior a ":" que sera el value
-    line = data[i];
+    line = data_headersBody[i];
     var lineContent = line.split(":")
 
     // anterior ":" --> key
@@ -57,8 +57,12 @@ const createServer = (requestHandler) => {
       const [infoArray, ...headersBody] = bufferString.split("\r\n");
       const resources = infoArray.split(" ");
 
+      limitHeaders = bufferString.indexOf('\n\r');
+
       // llamar a la funcion identifica y guarda headers en key-v
-      getMapHeadersBody(method,headersBody);
+      headersMap = getMapHeadersBody(bufferString.substring(0, limitHeaders - 1));
+
+      console.log("headerMap: ", headersMap)
 
       const request = {
         method: resources[0],
