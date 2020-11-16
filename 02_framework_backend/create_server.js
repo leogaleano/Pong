@@ -18,9 +18,9 @@ const getHeadersObj = (allHeaders) => {
 
   for (var i = 1; i < data_allHeaders.length; i++) {
     // por cada una seleccionaremos el contenido previo a ":" que sera el key
-    // y el contenido posterior a ":" que sera el value
+    // y el contenido posterior a ": " que sera el value
     line = data_allHeaders[i];
-    let lineContent = line.split(":")
+    let lineContent = line.split(": ")
     // // anterior ":" --> key
     // key = lineContent[0].toUpperCase();
     //console.log("key ==> " + key);
@@ -31,7 +31,7 @@ const getHeadersObj = (allHeaders) => {
     headers[lineContent[0].toUpperCase()] = lineContent[1];
   }
 
-  // devolvemos el map con el contenido de headersBody almacenado en k-v
+  // devolvemos el objeto con el contenido de headersBody almacenado en k-v
   return headers;
 }
 
@@ -41,18 +41,19 @@ const createServer = (requestHandler) => {
   const server = net.createServer(socket => {
     // se verifica que la conexcion se ha producido exitosamente
     console.log('Conexión exitosa con el servidor!')
-    //se crea una flag que indica si la peticion está segmentada
+    // se crea una varianle que almacenara el buffer en string
     let bufferString = "";
     // se implementa el metodo on para el socket al cual se le pasará el evento y la funcion que se ejecutara cuando el evento ocurra
     socket.on('data', function (data) {
       // se pasa la data de la peticion a string
       bufferString = Buffer.from(data).toString("utf-8");
-
+      // busca que el bufer tenga la expresion regular
       let comparacion = /[a-zA-Z]+ \/[ a-zA-Z\/]* HTTP\/1\.1/i.test(bufferString);
-
       console.log("comparacion:", comparacion)
-      if (comparacion) {
+
+      //se separan los header de la info del array
         const [infoArray, ...headersBody] = bufferString.split("\r\n");
+        // separa resources de request y se almacenan en variables distintas
         const resources = infoArray.split(" ");
         const request = {
           method: resources[0],
@@ -61,37 +62,49 @@ const createServer = (requestHandler) => {
           headers: {},
           body: ''
         };
-
+        // se obtiene el header de la request
         request.getHeader = (header) => {
+          // si no hay header o esta undefined devuelve null, sin o retorna el header
           if (request.headers[header.toUpperCase()] === undefined)
             return null
           else
-            request.headers[header.toUpperCase()]
+            return request.headers[header.toUpperCase()]
         }
-
+        // retorna el primer indice del bufferString
         limitHeaders = bufferString.indexOf('\n\r');
 
         // llamar a la funcion identifica y guarda headers en key-v
         const headersObj = getHeadersObj(bufferString.substring(0, limitHeaders - 1));
-
+        request.headers = headersObj;
 
         const allBody = bufferString.substring(limitHeaders + 3, bufferString.length);
-        request.headers = headersObj;
         request.body = allBody;
+
+        let contLen = request.getHeader("CONTENT-LENGTH");
+        if(contLen != null && request.body.length < contLen){
+          return;
+        }
+        
         //console.log("-----> headerObj: ", headersObj)
-      }
-
+      
+        // se implementa la funcion requestHandler del createServer
       requestHandler(request, {
+        // se define el metodo send del response
         send: (response_code, response_header, response_body) => {
-
+          // agrega la fecha del header responde
           response_header['Date'] = (new Date()).toUTCString();
-
-          socket.write(`HTTP/1.1 ${response_code}\r\n`);
+          // agreag la longitud del header response
+          response_header['content-length'] = response_body.length;
+          //escribe la respuesta en el socket
+          socket.write(`HTTP/1.1 ${response_code} Message\r\n`);
+          // devuelve los objetos key value response del header y los escribe en el socket
           Object.entries(response_header).forEach(([key, value]) => {
             socket.write(`${key}: ${value}\r\n`);
           });
+          // devuelve el response y los escribe en el socket
           socket.write("\r\n");
-          socket.write(response_body ? response_body + "\r\n\r\n\r\n" : "\r\n");
+          socket.write(response_body ? response_body + "\r\n\r\n\r\n" : "\r\n");+
+          // se finaliza la conexion con el socket
           socket.end();
         }
       });
@@ -114,5 +127,5 @@ const createServer = (requestHandler) => {
     }
   };
 };
-
+// se exporta la funcion createserver
 module.exports = createServer;
