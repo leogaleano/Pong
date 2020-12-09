@@ -7,7 +7,7 @@
     <title>Hello!</title>
   </head>
   <body>
-    <div id="root">
+    <div id="root" style="text-align: center;">
       <div fw-if="isPageLogIn">
         <form fw-on:submit="submitLogIn">
           <h1>Log in</h1>
@@ -44,6 +44,14 @@
     </div>
 
     <script>
+      //se crea la funcion que se le pasa como parametros el root, el estate y los handlers
+      IfUpdater = (root, state, handlers) => {
+        // del docuemtno, se seleccionan todos los elementos que contengan "fw-if" y por cada uno de ellos
+        document.querySelectorAll('[fw-if]').forEach(e => {
+          //se realiza un if que determinara si cada uno de estos elementos se mostrará modificancdo el atributo display dependiendo del estado
+          e.style.display = (state[e.getAttribute('fw-if')]) ? null : 'none';
+        });
+      }
       window.createApp = ({ rootElementId, initialState, handlers }) => {
         // ... 📝
       }
