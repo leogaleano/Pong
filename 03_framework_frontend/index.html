@@ -44,15 +44,46 @@
     </div>
 
     <script>
-      //se crea la funcion que se le pasa como parametros el root, el estate y los handlers
-      IfUpdater = (root, state, handlers) => {
-        // del documento, se seleccionan todos los elementos que contengan "fw-if" y por cada uno de ellos
-        document.querySelectorAll('[fw-if]').forEach(e => {
-          //se realiza un if que determinara  ssi cada uno de estos elementos se mostrará modificancdo el atributo
-          // display dependiendo del estado
-          e.style.display = (state[e.getAttribute('fw-if')]) ? null : 'none';
+      //se crea la funcion del framkework if que muestra u oculta elementos, a la que se le pasa como parametros el root, el initialState y los handlers
+      IfUpdater = (root, initialState, handlers) => {
+        // del documento, se seleccionan todos los elementos que contengan "fw-if" 
+        FwIfElements = document.querySelectorAll('[fw-if]')
+        // se realiza un foreach de todos los elemetos que contienen "fw-if"
+        FwIfElements.forEach(e => {
+          // se almacenan el elemento encontrado que contenga "fw-if"
+          element = e.getAttribute("fw-if")
+          // se realiza un if que ocultará el elemento en caso de que el initialState sea falso, modificando la propiedad display del elemento
+          if(initialState[element] == false){
+            e.style.display = "none";
+          }
+          // se realiza un else if que mostrará el elemento en caso de que el initialState sea true, modificando la propiedad display del elemento
+          else if(initialState[element] == true){
+            e.style.display = "block";
+          }
+          // se realiza un else que notificará de un error en caso de que no se cumplan las condiciones anteriores
+          else{
+            console.log("Se ha producido un error!")
+          }
         });
       }
+      //se crea la funcion  del framework content que manejará el contenido de los elementos, a la que se le pasa como parametros el root, el initialState y los handlers
+      ContentUpdater = (root, initialState, handlers) => {
+        // del documento, se seleccionan todos los elementos que contengan "fw-content" 
+        FwContentElements = document.querySelector("[fw-content]")
+        // se realiza un foreach de todos los elementos que contienen fw-content
+        FwContentElements.forEach(e => {
+          // se almacenan el elemento encontrado que contenga "fw-content"
+          element = e.getAttribute("fw-content")
+          //mediante el metodo innerhtml se establecerá un contenido para cada elemento
+          e.innerHTML = initialState[element]
+        });
+      }
+      // Se crea la funcion updater la cual llamará a las funciones IfUpdater y ContentUpdater, esta funcion será llamada por el create app para actualizar el contenido
+      Updater =  (root, initialState, handlers) => {
+        IfUpdater(root, initialState, handlers);
+        ContentUpdater(root, initialState, handlers);
+      }
+
       window.createApp = ({ rootElementId, initialState, handlers }) => {
         // ... 📝
       }
