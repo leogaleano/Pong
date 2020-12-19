@@ -8,10 +8,9 @@
   </head>
   <body>
     <div id="root">
+      <h1 fw-content="header"></h1>
       <div fw-if="isPageLogIn">
         <form fw-on:submit="submitLogIn">
-          <h1>Log in</h1>
-
           <input
             type="text"
             name="username"
@@ -23,6 +22,7 @@
             type="password"
             name="password"
             fw-attr:value="password"
+            fw-attr:style="passwordInputStyle"
             fw-on:change="changePassword"
             placeholder="Password"
           />
@@ -35,7 +35,6 @@
         </form>
       </div>
       <div fw-if="isPageMain">
-        <h1>Demo app</h1>
         <p>
           Hello, <span fw-content="username"></span>: this is the main page of a
           demo app.
@@ -53,10 +52,12 @@
       window.createApp({
         rootElementId: "root",
         initialState: {
+          header: "Log into the Demo App",
           isPageLogIn: true,
           isPageMain: false,
           username: "",
           password: "",
+          passwordInputStyle: "background-color: lightyellow;",
           isFormInvalid: false,
           validationMessage: "",
         },
@@ -74,6 +75,10 @@
             return {
               ...currentState,
               isFormInvalid: false,
+              passwordInputStyle:
+                password.length >= 8
+                  ? "background-color: lightgreen;"
+                  : "background-color: lightyellow;",
               password,
             };
           },
@@ -102,6 +107,7 @@
               isFormInvalid: false,
               isPageLogIn: false,
               isPageMain: true,
+              header: "Demo app",
             };
           },
         },
