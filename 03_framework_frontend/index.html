@@ -87,7 +87,7 @@
     document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
       //se le asigna el estado a cada elemento
       e.setAttribute('fw-attr:value', state[e.getAttribute('name')]);
-      //se imprime por consola
+      //se imprime por consola, porque es la unica forma de comprobar el cambio
       console.log(e);
     });
   }
