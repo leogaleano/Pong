@@ -47,6 +47,7 @@
 </div>
 
 <script>
+  //se crea una variable global vacia que contendra el estado de la app y permitira el state sharing
   let appState = {};
 
   window.createApp = ({
@@ -54,6 +55,7 @@
                         initialState,
                         handlers
                       }) => {
+    //se inicializa el estado de la app
     appState = initialState;
     setVisibility(appState);
 
@@ -61,42 +63,62 @@
     setOnSubmitListeners(handlers);
   }
 
+  //se crea la funcion setVisibility que maneja la visibilidad de los elementos y recibe el state como parametro
   setVisibility = (state) => {
+    //se seleccionan todos los elementos del documento que tengan fw-if y por cada elemento hayado...
     document.querySelectorAll('[fw-if]').forEach(e => {
+      //se le cambia el atributo display dependiendo del estado de cada elemento se mostrará (block) o se ocultara (none)
       e.style.display = (state[e.getAttribute('fw-if')]) ? 'block' : 'none';
     });
   }
 
+  //se crea la funcion setContent que manejara el contenido de los elementos y recibe el state como parametro
   setContent = (state) => {
+    //se seleccionan todos los elementos del documento que tengan fw-content y por cada elemento encontrado...
     document.querySelectorAll('[fw-content]').forEach(e => {
+      //mediante el metodo innerHTML se le establecerá un contenido
       e.innerHTML = state[e.getAttribute('fw-content')];
     });
   }
 
+  //se crea la funcion setAttributeValues que manejara los valores contenidos en los elementos y recibe el state como parametro
   setAttributeValues = (state) => {
+    //se seleccionan todos los elementos del documento que contengan la expresion regular y por cada uno de los elementos...
     document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
+      //se le asigna el estado a cada elemento
       e.setAttribute('fw-attr:value', state[e.getAttribute('name')]);
+      //se imprime por consola
       console.log(e);
     });
   }
 
+  // Creamos dos funciones diferentes: onchange/onsubmit
+  //Funcion On Change,  recibe por parametros lod handlers ( changeUsername, changePassword, submitLogIn)
   setOnChangeListeners = (handlers) => {
+    // en el doc busca los elementos que contengan la expresion regular y por cada uno de los elementos...
     document.querySelectorAll('[fw-on\\:change]').forEach(e => {
+      // cuando encuentre un evento en el elemento  ejecutara la funcion handler, no sin este evento
       e.addEventListener('change', (event) => {
         let handler = handlers[e.getAttribute('fw-on:change')];
 
         appState = handler(appState, event);
+        // Llamamiento correspondiente al set value to atrribute
         setAttributeValues(appState);
       });
     });
   }
 
+  //Funcion On Submit,  recibe por parametros lod handlers ( changeUsername, changePassword, submitLogIn)
   setOnSubmitListeners = (handlers) => {
+    //se seleccionan todos los elementos del documento que contengan la expresion regular y por cada uno de los elementos...
     document.querySelectorAll('[fw-on\\:submit]').forEach(e => {
+      // cuando encuentre un evento en el elemento  ejecutara la funcion handler, no sin este evento
       e.addEventListener('submit', (event) => {
         let handler = handlers[e.getAttribute('fw-on:submit')];
 
         appState = handler(appState, event);
+
+        // Llamamiento a las funciones para cambiar su visivilidad y darle el content
         setVisibility(appState);
         setContent(appState)
       });
