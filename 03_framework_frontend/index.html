@@ -10,41 +10,29 @@
 </head>
 
 <body>
-<div id="root" style="text-align: center;">
-  <div fw-if="isPageLogIn">
-    <form fw-on:submit="submitLogIn">
-      <h1>Log in</h1>
+  <div id="root" style="text-align: center;">
+    <div fw-if="isPageLogIn">
+      <form fw-on:submit="submitLogIn">
+        <input type="text" name="username" fw-attr:value="username" fw-on:change="changeUsername"
+          placeholder="Username or email" />
+        <input type="password" name="password" fw-attr:value="password" fw-attr:style="passwordInputStyle"
+          fw-on:change="changePassword" placeholder="Password" />
 
-      <input
-              type="text"
-              name="username"
-              fw-attr:value="username"
-              fw-on:change="changeUsername"
-              placeholder="Username or email"
-      />
-      <input
-              type="password"
-              name="password"
-              fw-attr:value="password"
-              fw-on:change="changePassword"
-              placeholder="Password"
-      />
+        <input type="submit" value="log in" />
 
-      <input type="submit" value="log in" />
-
-      <p fw-if="isFormInvalid">
-        Validation error: <span fw-content="validationMessage"></span>
+        <p fw-if="isFormInvalid">
+          Validation error: <span fw-content="validationMessage"></span>
+        </p>
+      </form>
+    </div>
+    <div fw-if="isPageMain">
+      <h1>Demo app</h1>
+      <p>
+        Hello, <span fw-content="username"></span>: this is the main page of a
+        demo app.
       </p>
-    </form>
+    </div>
   </div>
-  <div fw-if="isPageMain">
-    <h1>Demo app</h1>
-    <p>
-      Hello, <span fw-content="username"></span>: this is the main page of a
-      demo app.
-    </p>
-  </div>
-</div>
 
   <script>
     let appState = {};
@@ -109,10 +97,12 @@
     window.createApp({
       rootElementId: "root",
       initialState: {
+        header: "Log into the Demo App",
         isPageLogIn: true,
         isPageMain: false,
         username: "",
         password: "",
+        passwordInputStyle: "background-color: lightyellow;",
         isFormInvalid: false,
         validationMessage: "",
       },
@@ -139,17 +129,22 @@
           if (currentState.username === "") {
             return {
               ...currentState,
-              isFormInvalid: true,
-              validationMessage: "You must provide a username",
+              isFormInvalid: false,
+              passwordInputStyle:
+                password.length >= 8
+                  ? "background-color: lightgreen;"
+                  : "background-color: lightyellow;",
+              password,
             };
           }
 
           if (currentState.password.length < 8) {
             return {
               ...currentState,
-              isFormInvalid: true,
-              validationMessage:
-                      "The password must contain at least 8 characters",
+              isFormInvalid: false,
+              isPageLogIn: false,
+              isPageMain: true,
+              header: "Demo app",
             };
           }
 
@@ -164,4 +159,5 @@
     });
   </script>
 </body>
+
 </html>
