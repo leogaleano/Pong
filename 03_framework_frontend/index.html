@@ -37,6 +37,7 @@
   </div>
 
   <script>
+    //se crea una variable vacia que contendra el estado de la app
     let appState = {};
 
     window.createApp = ({
@@ -44,28 +45,36 @@
       initialState,
       handlers
     }) => {
+      //se inicialica el estado de la app
       appState = initialState;
       setVisibility(appState);
 
       setOnChangeListeners(handlers);
       setOnSubmitListeners(handlers);
     }
-
+    //se crea la funcion setVisibility que maneja la visibilidad de los elementos y recibe el state como parametro
     setVisibility = (state) => {
+      //se seleccionan todos los elementos del documento que tengan fw-if y por cada elemento hayado...
       document.querySelectorAll('[fw-if]').forEach(e => {
+        //se le cambia el atributo display dependiendo del estado de cada elemento se mostrará (block) o se ocultara (none)
         e.style.display = (state[e.getAttribute('fw-if')]) ? 'block' : 'none';
       });
-    }
 
+    //se crea la funcion setContent que manejara el contenido de los elementos y recibe el state como parametro
     setContent = (state) => {
+      //se seleccionan todos los elementos del documento que tengan fw-content y por cada elemento encontrado...
       document.querySelectorAll('[fw-content]').forEach(e => {
+        //mediante el metodo innerHTML se le establecerá un contenido 
         e.innerHTML = state[e.getAttribute('fw-content')];
       });
     }
-
+    //se crea la funcion setAttributeValues que manejara los valores contenidos en los elementos y recibe el state como parametro
     setAttributeValues = (state) => {
+      //se seleccionan todos los elementos del documento que contengan la expresion regular y por cada uno de los elementos...
       document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
+        //se le asigna el estado a cada elemento
         e.setAttribute('fw-attr:value', state[e.getAttribute('name')]);
+        //se imprime por consola
         console.log(e);
       });
     }
