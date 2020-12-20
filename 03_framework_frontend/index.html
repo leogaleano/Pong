@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -9,67 +10,98 @@
 </head>
 
 <body>
-  <div id="root" style="text-align: center;">
-    <div fw-if="isPageLogIn">
-      <form fw-on:submit="submitLogIn">
-        <h1>Log in</h1>
+<div id="root" style="text-align: center;">
+  <div fw-if="isPageLogIn">
+    <form fw-on:submit="submitLogIn">
+      <h1>Log in</h1>
 
-        <input type="text" name="username" fw-attr:value="username" fw-on:change="changeUsername"
-          placeholder="Username or email" />
-        <input type="password" name="password" fw-attr:value="password" fw-on:change="changePassword"
-          placeholder="Password" />
+      <input
+              type="text"
+              name="username"
+              fw-attr:value="username"
+              fw-on:change="changeUsername"
+              placeholder="Username or email"
+      />
+      <input
+              type="password"
+              name="password"
+              fw-attr:value="password"
+              fw-on:change="changePassword"
+              placeholder="Password"
+      />
 
-        <input type="submit" value="log in" />
+      <input type="submit" value="log in" />
 
-        <p fw-if="isFormInvalid">
-          Validation error: <span fw-content="validationMessage"></span>
-        </p>
-      </form>
-    </div>
-    <div fw-if="isPageMain">
-      <h1>Demo app</h1>
-      <p>
-        Hello, <span fw-content="username"></span>: this is the main page of a
-        demo app.
+      <p fw-if="isFormInvalid">
+        Validation error: <span fw-content="validationMessage"></span>
       </p>
-    </div>
+    </form>
   </div>
+  <div fw-if="isPageMain">
+    <h1>Demo app</h1>
+    <p>
+      Hello, <span fw-content="username"></span>: this is the main page of a
+      demo app.
+    </p>
+  </div>
+</div>
 
   <script>
-    window.createApp = ({ rootElementId, initialState, handlers }) => {
-      // ... 📝
+    let appState = {};
 
-      //se crea la funcion del framkework if que muestra u oculta elementos, a la que se le pasa como parametros el root, el initialState y los handlers
-      IfUpdater = (root, initialState, handlers) => {
-        FwIfElements = Object.values(document.querySelectorAll('[fw-if]'))
-        FwIfElements.map(e => {
-          element = e.getAttribute("fw-if")
-          e.style.display = (initialState[element]) ? "block" : "none"
-        });
-      }
-      //se crea la funcion  del framework content que manejará el contenido de los elementos, a la que se le pasa como parametros el root, el initialState y los handlers
-      ContentUpdater = (root, initialState, handlers) => {
-        FwContentElements = Object.values(document.querySelectorAll("[fw-content]"))
-        FwContentElements.map(e => {
-          element = e.getAttribute("fw-content")
-          e.innerHTML = initialState[element]
-        });
-      }
+    window.createApp = ({
+      rootElementId,
+      initialState,
+      handlers
+    }) => {
+      appState = initialState;
+      setVisibility(appState);
 
-      // Se crea la funcion updater la cual llamará a las funciones IfUpdater y ContentUpdater, esta funcion será llamada por el create app para actualizar el contenido
-      Updater = (root, initialState, handlers) => {
-        IfUpdater(root, initialState, handlers);
-        ContentUpdater(root, initialState, handlers);
-      }
-
-      Updater(rootElementId, initialState, handlers);
-
-      const submit = document.getElementsByTagName('input')[2];
-      submit.onclick = () => {
-
-      }
+      setOnChangeListeners(handlers);
+      setOnSubmitListeners(handlers);
     }
 
+    setVisibility = (state) => {
+      document.querySelectorAll('[fw-if]').forEach(e => {
+        e.style.display = (state[e.getAttribute('fw-if')]) ? 'block' : 'none';
+      });
+    }
+
+    setContent = (state) => {
+      document.querySelectorAll('[fw-content]').forEach(e => {
+        e.innerHTML = state[e.getAttribute('fw-content')];
+      });
+    }
+
+    setAttributeValues = (state) => {
+      document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
+        e.setAttribute('fw-attr:value', state[e.getAttribute('name')]);
+        console.log(e);
+      });
+    }
+
+    setOnChangeListeners = (handlers) => {
+      document.querySelectorAll('[fw-on\\:change]').forEach(e => {
+        e.addEventListener('change', (event) => {
+          let handler = handlers[e.getAttribute('fw-on:change')];
+
+          appState = handler(appState, event);
+          setAttributeValues(appState);
+        });
+      });
+    }
+
+    setOnSubmitListeners = (handlers) => {
+      document.querySelectorAll('[fw-on\\:submit]').forEach(e => {
+        e.addEventListener('submit', (event) => {
+          let handler = handlers[e.getAttribute('fw-on:submit')];
+
+          appState = handler(appState, event);
+          setVisibility(appState);
+          setContent(appState)
+        });
+      });
+    }
 
   </script>
 
@@ -108,7 +140,7 @@
             return {
               ...currentState,
               isFormInvalid: true,
-              validationMessage: "You must provide a username", // cuando clickas log in sin poner username
+              validationMessage: "You must provide a username",
             };
           }
 
@@ -117,8 +149,7 @@
               ...currentState,
               isFormInvalid: true,
               validationMessage:
-                "The password must contain at least 8 characters", // cuando clickas log in poniendo username
-              // y no password
+                      "The password must contain at least 8 characters",
             };
           }
 
@@ -133,5 +164,4 @@
     });
   </script>
 </body>
-
 </html>
