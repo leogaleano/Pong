@@ -59,6 +59,7 @@
         //se le cambia el atributo display dependiendo del estado de cada elemento se mostrará (block) o se ocultara (none)
         e.style.display = (state[e.getAttribute('fw-if')]) ? 'block' : 'none';
       });
+    }
 
     //se crea la funcion setContent que manejara el contenido de los elementos y recibe el state como parametro
     setContent = (state) => {
