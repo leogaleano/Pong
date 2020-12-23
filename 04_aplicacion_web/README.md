@@ -26,7 +26,7 @@ El _pull request_ y el despliegue para la entrega del ejercicio debe realizarse 
 
 El servidor debe implementarse utilizando el _framework_ creado por el alumno en la práctica `02_framework_backend`.
 
-La página web debe implementarse utilizando el _framework_ creado por el alumno en la práctica `03_framework_frontend` o [su versión ampliada](https://pastebin.com/raw/9FVgT81e).
+La página web puede implementarse utilizando el _framework_ creado por el alumno en la práctica `03_framework_frontend`. También es posible utilizar la versión ampliada del _framework_, [publicada en Glitch](https://glitch.com/edit/#!/04-ejemplo-framework-frontend-aumentado?path=framework.js%3A1%3A4633).
 
 Sin perjuicio de lo anterior, el ejercicio se debe realizar sin utilizar librerías externas. Se entiende por librería externa aquella que no esté incluida entre las APIs del navegador o de NodeJS.
 
@@ -42,7 +42,6 @@ La nota de dificultad se calculará de la siguiente manera:
 
 Cinco puntos si el juego incluye las siguientes características:
 
-- Manejo de estado de la aplicación utilizando programación funcional reactiva.
 - Manejo de eventos, ya sean de teclado, ratón, intervalos de tiempo, etc.
 - Los archivos que componen la página web (HTML, CSS, etc.) son servidos por un servidor web a través del protocolo HTTP.
 
