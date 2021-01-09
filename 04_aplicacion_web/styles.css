@@ -1,0 +1,37 @@
+.TableroJuego {
+    background-color: #000000;
+    border-color : #FFFF00;
+    border-style : solid;
+    width : 600px;
+    height: 400px;
+}
+.pelota{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 11px;
+    left: 383px;
+    background-color: #FFFF00;
+}
+.raqueta {
+    position: absolute;
+    width: 20px;
+    height: 80px;
+    background-color: #FFFF00;
+}
+.info {
+    width: 600px;
+    height: 150px;
+    padding: 3px;
+    background-color: #000000;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-color : #FFFF00;
+    border-style : solid;
+}
+
+.textoestatico {
+    color: #FFFFFF;
+    font-family : "Arial";
+    font-weight : bold;
+}

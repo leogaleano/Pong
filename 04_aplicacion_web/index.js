@@ -1,13 +1,23 @@
 const createServer = require("./create_server.js");
+const fs = require("fs");
 
 const get = (request, response) => {
   // ...📝
-
-  response.send(
-    "200"
-    // ...,
-    // ...
-  );
+  console.log(request.path, request.path == "/");
+  if(request.path == "/"){
+    response.send(
+      "200",
+      {"content-Type":"text/html"},
+      fs.readFileSync('./index.html')
+    );
+  }
+  else{
+    response.send(
+    "200",
+    {},
+    fs.readFileSync('.'+request.path)
+    );
+  }
 };
 
 const post = (request, response) => {
@@ -15,12 +25,18 @@ const post = (request, response) => {
 
   response.send(
     "200"
-    // ...,
     // ...
   );
 };
 
 const requestListener = (request, response) => {
+  if(request === undefined){
+    return response.send(
+      500,
+      { "Content-Type": "text/plain" },
+      "Server Error\nRequest Undefined"
+    );
+  }
   switch (request.method) {
     case "GET": {
       return get(request, response);
