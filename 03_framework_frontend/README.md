@@ -15,7 +15,7 @@ Nótese que los atributos `fw-if`, `fw-content`, `fw-attr:*` y `fw-on:*` son atr
 - `fw-if` se utiliza para mostrar u ocultar un elemento (y sus descendientes) en función de un booleano.
 - `fw-content` se utiliza para controlar el texto contenido por un elemento.
 - `fw-attr:*` se utiliza para controlar el valor de un atributo del elemento. El nombre del atributo controlado se especifica a partir de los dos puntos.
-- `fw-on:*` se utiliza para asignar un handler de evento al elemento. El nombre del evento para el que se registra el handler se especifica a partir de los dos puntos.
+- `fw- on:*`se utiliza para asignar un handler de evento al elemento. El nombre del evento para el que se registra el handler se especifica a partir de los dos puntos.
 
 Los valores de estos atributos deben ser nombres de propiedades del estado de la aplicación o nombres de handlers. Tanto las propiedades del estado como los handlers son especificados como parámetros de la función `createApp`.
 

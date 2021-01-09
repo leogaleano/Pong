@@ -1,117 +1,189 @@
 <!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello!</title>
-  </head>
-  <body>
-    <div id="root">
-      <h1 fw-content="header"></h1>
-      <div fw-if="isPageLogIn">
-        <form fw-on:submit="submitLogIn">
-          <input
-            type="text"
-            name="username"
-            fw-attr:value="username"
-            fw-on:change="changeUsername"
-            placeholder="Username or email"
-          />
-          <input
-            type="password"
-            name="password"
-            fw-attr:value="password"
-            fw-attr:style="passwordInputStyle"
-            fw-on:change="changePassword"
-            placeholder="Password"
-          />
 
-          <input type="submit" value="log in" />
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hello!</title>
+</head>
 
-          <p fw-if="isFormInvalid">
-            Validation error: <span fw-content="validationMessage"></span>
-          </p>
-        </form>
-      </div>
-      <div fw-if="isPageMain">
-        <p>
-          Hello, <span fw-content="username"></span>: this is the main page of a
-          demo app.
-        </p>
-      </div>
-    </div>
+<body>
+<div id="root" style="text-align: center;">
+  <div fw-if="isPageLogIn">
+    <form fw-on:submit="submitLogIn">
+      <h1>Log into the Demo App</h1>
 
-    <script>
-      window.createApp = ({ rootElementId, initialState, handlers }) => {
-        // ... 📝
-      }
-    </script>
+      <input
+              type="text"
+              name="username"
+              fw-attr:value="username"
+              fw-on:change="changeUsername"
+              placeholder="Username or email"
+      />
+      <input
+              type="password"
+              name="password"
+              fw-attr:value="password"
+              fw-on:change="changePassword"
+              placeholder="Password"
+      />
 
-    <script>
-      window.createApp({
-        rootElementId: "root",
-        initialState: {
-          header: "Log into the Demo App",
-          isPageLogIn: true,
-          isPageMain: false,
-          username: "",
-          password: "",
-          passwordInputStyle: "background-color: lightyellow;",
-          isFormInvalid: false,
-          validationMessage: "",
-        },
-        handlers: {
-          changeUsername: (currentState, event) => {
-            const username = event.target.value;
-            return {
-              ...currentState,
-              isFormInvalid: false,
-              username,
-            };
-          },
-          changePassword: (currentState, event) => {
-            const password = event.target.value;
-            return {
-              ...currentState,
-              isFormInvalid: false,
-              passwordInputStyle:
-                password.length >= 8
-                  ? "background-color: lightgreen;"
-                  : "background-color: lightyellow;",
-              password,
-            };
-          },
-          submitLogIn: (currentState, event) => {
-            event.preventDefault();
+      <input type="submit" value="log in" />
 
-            if (currentState.username === "") {
-              return {
-                ...currentState,
-                isFormInvalid: true,
-                validationMessage: "You must provide a username",
-              };
-            }
+      <p fw-if="isFormInvalid">
+        Validation error: <span fw-content="validationMessage"></span>
+      </p>
+    </form>
+  </div>
+  <div fw-if="isPageMain">
+    <h1>Demo app</h1>
+    <p>
+      Hello, <span fw-content="username"></span>: this is the main page of a
+      demo app.
+    </p>
+  </div>
+</div>
 
-            if (currentState.password.length < 8) {
-              return {
-                ...currentState,
-                isFormInvalid: true,
-                validationMessage:
-                  "The password must contain at least 8 characters",
-              };
-            }
+<script>
+  //se crea una variable global vacia que contendra el estado de la app y permitira el state sharing
+  let appState = {};
 
-            return {
-              ...currentState,
-              isFormInvalid: false,
-              isPageLogIn: false,
-              isPageMain: true,
-              header: "Demo app",
-            };
-          },
-        },
+  window.createApp = ({
+                        rootElementId,
+                        initialState,
+                        handlers
+                      }) => {
+    //se inicializa el estado de la app
+    appState = initialState;
+    setVisibility(appState);
+
+    setOnChangeListeners(handlers);
+    setOnSubmitListeners(handlers);
+  }
+
+  //se crea la funcion setVisibility que maneja la visibilidad de los elementos y recibe el state como parametro
+  setVisibility = (state) => {
+    //se seleccionan todos los elementos del documento que tengan fw-if y por cada elemento hayado...
+    document.querySelectorAll('[fw-if]').forEach(e => {
+      //se le cambia el atributo display dependiendo del estado de cada elemento se mostrará (block) o se ocultara (none)
+      e.style.display = (state[e.getAttribute('fw-if')]) ? 'block' : 'none';
+    });
+  }
+
+  //se crea la funcion setContent que manejara el contenido de los elementos y recibe el state como parametro
+  setContent = (state) => {
+    //se seleccionan todos los elementos del documento que tengan fw-content y por cada elemento encontrado...
+    document.querySelectorAll('[fw-content]').forEach(e => {
+      //mediante el metodo innerHTML se le establecerá un contenido
+      e.innerHTML = state[e.getAttribute('fw-content')];
+    });
+  }
+
+  //se crea la funcion setAttributeValues que manejara los valores contenidos en los elementos y recibe el state como parametro
+  setAttributeValues = (state) => {
+    //se seleccionan todos los elementos del documento que contengan la expresion regular y por cada uno de los elementos...
+    document.querySelectorAll('[fw-attr\\:value]').forEach(e => {
+      //se le asigna el estado a cada elemento
+      e.setAttribute('fw-attr:value', state[e.getAttribute('name')]);
+      //se imprime por consola, porque es la unica forma de comprobar el cambio
+      console.log(e);
+    });
+  }
+
+  // Creamos dos funciones diferentes: onchange/onsubmit
+  //Funcion On Change,  recibe por parametros lod handlers ( changeUsername, changePassword, submitLogIn)
+  setOnChangeListeners = (handlers) => {
+    // en el doc busca los elementos que contengan la expresion regular y por cada uno de los elementos...
+    document.querySelectorAll('[fw-on\\:change]').forEach(e => {
+      // cuando encuentre un evento en el elemento  ejecutara la funcion handler, no sin este evento
+      e.addEventListener('change', (event) => {
+        let handler = handlers[e.getAttribute('fw-on:change')];
+
+        appState = handler(appState, event);
+        // Llamamiento correspondiente al set value to atrribute
+        setAttributeValues(appState);
       });
-    </script>
-  </body>
+    });
+  }
+
+  //Funcion On Submit,  recibe por parametros lod handlers ( changeUsername, changePassword, submitLogIn)
+  setOnSubmitListeners = (handlers) => {
+    //se seleccionan todos los elementos del documento que contengan la expresion regular y por cada uno de los elementos...
+    document.querySelectorAll('[fw-on\\:submit]').forEach(e => {
+      // cuando encuentre un evento en el elemento  ejecutara la funcion handler, no sin este evento
+      e.addEventListener('submit', (event) => {
+        let handler = handlers[e.getAttribute('fw-on:submit')];
+
+        appState = handler(appState, event);
+
+        // Llamamiento a las funciones para cambiar su visivilidad y darle el content
+        setVisibility(appState);
+        setContent(appState)
+      });
+    });
+  }
+
+</script>
+
+<script>
+  window.createApp({
+    rootElementId: "root",
+    initialState: {
+      isPageLogIn: true,
+      isPageMain: false,
+      username: "",
+      password: "",
+      isFormInvalid: false,
+      validationMessage: "",
+    },
+    handlers: {
+      changeUsername: (currentState, event) => {
+        const username = event.target.value;
+        return {
+          ...currentState,
+          isFormInvalid: false,
+          username,
+        };
+      },
+      changePassword: (currentState, event) => {
+        const password = event.target.value;
+        return {
+          ...currentState,
+          isFormInvalid: false,
+          password,
+        };
+      },
+      submitLogIn: (currentState, event) => {
+        event.preventDefault();
+
+        if (currentState.username === "") {
+          return {
+            ...currentState,
+            isFormInvalid: true,
+            validationMessage: "You must provide a username",
+          };
+        }
+
+        if (currentState.password.length < 8) {
+          return {
+            ...currentState,
+            isFormInvalid: true,
+            validationMessage:
+                    "The password must contain at least 8 characters",
+          };
+        }
+
+        return {
+          ...currentState,
+          isFormInvalid: false,
+          isPageLogIn: false,
+          isPageMain: true,
+        };
+      },
+    },
+  });
+</script>
+</body>
 </html>
