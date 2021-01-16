@@ -91,6 +91,7 @@ const createServer = (requestHandler) => {
         // se implementa la funcion requestHandler del createServer
       requestHandler(request, {
         // se define el metodo send del response
+        //se construye la respuesta HTTP del servidor
         send: (response_code, response_header, response_body) => {
           // agrega la fecha del header responde
           response_header['Date'] = (new Date()).toUTCString();

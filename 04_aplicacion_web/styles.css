@@ -7,6 +7,11 @@ html{
     width : 600px;
     height: 400px;
 }
+#iniciar {
+    font-size: 25px;
+    position: absolute;
+    padding: 10px 0 0 170px;
+}
 .pelota{
     position: absolute;
     width: 20px;
@@ -23,15 +28,15 @@ html{
 }
 .linea {
     border-left: 6px dashed #39ff14;
-    height: 370px;
-    top: 13px;
-    left: 300px;
+    height: 320px;
+    top: 40px;
+    left: 297px;
     position: relative;
     vertical-align: middle;
 }
 .info {
     width: 606px;
-    height: 150px;
+    height: 115px;
     padding: 3px;
     background-color: #000000;
     border-bottom-left-radius: 25px;
@@ -39,7 +44,12 @@ html{
     border-color : #39ff14;
     border-style : solid;
 }
-
+.puntaje {
+    margin: -25px 0 0 0;
+}
+#historico{
+    margin: -20px 0 0 0;
+}
 .textoestatico {
     color: #FFFFFF;
     font-family : "Bebas Neue";
